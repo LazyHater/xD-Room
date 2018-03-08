@@ -10,3 +10,9 @@ MQTT_CON = {
         "host": "127.0.0.1",
         "port": 1883,
         }
+
+SUNSET_API = {
+        "url": "https://api.sunrise-sunset.org/json?lat={lat}&lng={lng}&formatted=0",
+        "lat": "51.121103",
+        "lng": "17.048797",
+        }

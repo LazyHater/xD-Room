@@ -10,7 +10,16 @@ services:
     network_mode: host
     privileged: true
     restart: always
+    #command: "tail -f /dev/null"
     volumes:
             - "./ble:/code" 
+            - "./common:/common" 
+
+  hub:
+    build: ./docker/hub
+    network_mode: host
+    restart: always
+    volumes:
+            - "./hub:/code" 
             - "./common:/common" 
 

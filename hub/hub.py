@@ -17,7 +17,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def execute(task):
-    if isinstance(task, basestring):
+    if isinstance(task, str):
         logging.info('Executing command "%s"', task)
         subprocess.check_output(task.split(' '))
     else:
@@ -36,11 +36,11 @@ def on_message(client, userdata, msg):
 
 
 tasks = {
-    'ENTER': ['lamp -l 3', constants.WPC_CMD],
-    'LEAVE': ['lamp -l 0'],
+        'ENTER': ["curl -s --data level=3 http://192.168.1.9/lamp"],#, constants.WPC_CMD],
+        'LEAVE': ["curl -s --data level=0 http://192.168.1.9/lamp"],#, constants.WPC_CMD],
 }
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
 
 
