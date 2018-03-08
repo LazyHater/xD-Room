@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mqtt:
+    image: fstehle/rpi-mosquitto
+    network_mode: host
+    restart: always
+
+  ble:
+    build: ./docker/ble
+    network_mode: host
+    privileged: true
+    restart: always
+    volumes:
+            - "./ble:/code" 
+            - "./common:/common" 
+
