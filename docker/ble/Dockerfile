@@ -7,6 +7,9 @@ RUN pip3 install bluepy --upgrade
 # fix unexpected status
 ADD ./btle.py  /usr/local/lib/python3.4/dist-packages/bluepy/btle.py 
 
+ENV TZ=Europe/Warsaw
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENV PYTHONPATH="/common"
 
 WORKDIR /code
