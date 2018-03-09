@@ -3,6 +3,7 @@ import subprocess
 import constants
 import json
 import logging
+import sunrise
 # The callback for when the client receives a CONNACK response from the server.
 
 
@@ -20,9 +21,11 @@ def execute(task):
     if isinstance(task, str):
         logging.info('Executing command "%s"', task)
         subprocess.check_output(task.split(' '))
-    else:
+    elif callable(task):
         logging.info('Running function "%s"', task)
-
+        task()
+    else:
+        logging.error("Unknown command type: %s", task)
 
 def execute_tasks(tasks):
     for t in tasks:
@@ -35,9 +38,17 @@ def on_message(client, userdata, msg):
     execute_tasks(tasks[data['type']])
 
 
+def lamp_enter_handler():
+    try:
+        partial = sunrise.get_sunrise_and_sunset(constants.SUNRISE_URL)
+        is_day = sunrise.is_day_now(*partial)
+    except Exception as e:
+        logging.error("Failed to determine is_day, asssume night!\n%s", e)
+    execute(constants.LAMP_ON_CMD)
+
 tasks = {
-        'ENTER': ["curl -s --data level=3 http://192.168.1.9/lamp"],#, constants.WPC_CMD],
-        'LEAVE': ["curl -s --data level=0 http://192.168.1.9/lamp"],#, constants.WPC_CMD],
+        'ENTER': [ lamp_enter_handler, constants.WPC_CMD],
+        'LEAVE': [ constants.LAMP_OFF_CMD ],
 }
 
 logging.basicConfig(level=logging.DEBUG,
