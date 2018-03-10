@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import paho.mqtt.publish as publish
 import json
 import constants
+import threading
+from time import sleep
 
 
 class ScanDelegate(DefaultDelegate):
@@ -33,10 +35,13 @@ class User(object):
                 self.enter_event()
 
     def check(self):
-        if self.is_present and \
-                datetime.now() - self.last_seen > timedelta(seconds=self.timeout):
-            self.is_present = False
-            self.leave_event()
+        while True:
+            if self.is_present and \
+                     datetime.now() - self.last_seen > timedelta(seconds=self.timeout):
+                self.is_present = False
+                self.leave_event()
+            sleep(1)
+            
 
     def send_event(self, type):
         payload = {
@@ -68,8 +73,10 @@ if __name__ == '__main__':
                         format='%(asctime)s %(levelname)s %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
 
     user = User()
+    t = threading.Thread(target=user.check)
+    t.start()
     scanner = Scanner().withDelegate(ScanDelegate(user))
 
+    logging.info('Entering main scan loop')
     while True:
-        scanner.scan(3)
-        user.check()
+        scanner.scan()

@@ -4,6 +4,7 @@ import constants
 import json
 import logging
 import sunrise
+import datetime
 # The callback for when the client receives a CONNACK response from the server.
 
 
@@ -34,17 +35,21 @@ def execute_tasks(tasks):
 
 def on_message(client, userdata, msg):
     data = json.loads(msg.payload)
+    logging.info("")
     logging.info('New Event! Type %s User %s Date %s', data['type'], data['name'], data['date'])
     execute_tasks(tasks[data['type']])
 
 
 def lamp_enter_handler():
+    is_day = False
     try:
         partial = sunrise.get_sunrise_and_sunset(constants.SUNRISE_URL)
+        logging.debug("Sunrise at %s sunset at %s now is %s", *partial, datetime.datetime.utcnow())
         is_day = sunrise.is_day_now(*partial)
     except Exception as e:
-        logging.error("Failed to determine is_day, asssume night!\n%s", e)
-    execute(constants.LAMP_ON_CMD)
+        logging.error("Failed to determine is_day, asssume night!%s", e)
+    if not is_day:
+        execute(constants.LAMP_ON_CMD)
 
 tasks = {
         'ENTER': [ lamp_enter_handler, constants.WPC_CMD],

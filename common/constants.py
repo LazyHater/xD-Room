@@ -1,6 +1,6 @@
 BEACON_CONF = {
         "mac": "a0:e6:f8:42:52:70",
-        "timeout": 15,
+        "timeout": 60,
         "name": "wakabajaszi",
         "status_topic": "klu/ble/status",
         "event_topic": "klu/ble/event",
