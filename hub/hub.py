@@ -5,6 +5,7 @@ import json
 import logging
 import sunrise
 import datetime
+import threading
 # The callback for when the client receives a CONNACK response from the server.
 
 
@@ -51,23 +52,39 @@ def lamp_enter_handler():
     if not is_day:
         execute(constants.LAMP_ON_CMD)
 
-tasks = {
-        'ENTER': [ lamp_enter_handler, constants.WPC_CMD],
-        'LEAVE': [ constants.LAMP_OFF_CMD ],
-}
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
+# egz { {"color": {"r": 255, "b": 455, "g": 455}, }}
+def set_table_effect(idx):
+    payload = {
+        'idx': idx,
+    }
+    payload = json.dumps(payload)
 
+    client.publish("klu/table/effect", payload)
+
+def table_enter_handler():
+    set_table_effect(6) # disco
+
+    t = threading.Timer(60, set_table_effect, args=(3,)) # sin2
+    t.start()
+
+def table_leave_handler():
+    set_table_effect(11) # black
 
 client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
 
-#client.connect(host="127.0.0.1", port=1883, keepalive=60)
-client.connect(**constants.MQTT_CON)
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+if __name__ == "__main__":
+    tasks = {
+            'ENTER': [ lamp_enter_handler, table_enter_handler, constants.WPC_CMD],
+            'LEAVE': [ constants.LAMP_OFF_CMD, table_leave_handler],
+    }
+
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)s %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
+
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+
+    client.connect(**constants.MQTT_CON)
+    client.loop_forever()
