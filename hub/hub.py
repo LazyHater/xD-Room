@@ -41,6 +41,11 @@ def on_message(client, userdata, msg):
     execute_tasks(tasks[data['type']])
 
 
+def set_lamp_level(idx):
+    payload = str(idx)
+    client.publish(constants.MQTT_LAMP_SET_TOPIC, payload)
+
+
 def lamp_enter_handler():
     is_day = False
     try:
@@ -48,10 +53,12 @@ def lamp_enter_handler():
         logging.debug("Sunrise at %s sunset at %s now is %s", *partial, datetime.datetime.utcnow())
         is_day = sunrise.is_day_now(*partial)
     except Exception as e:
-        logging.error("Failed to determine is_day, asssume night!%s", e)
+        logging.error("Failed to determine is_day, asssume night! %s", e)
     if not is_day:
-        execute(constants.LAMP_ON_CMD)
+        set_lamp_level(3)
 
+def lamp_leave_handler():
+    set_lamp_level(0)
 
 # egz { {"color": {"r": 255, "b": 455, "g": 455}, }}
 def set_table_effect(idx):
@@ -60,7 +67,7 @@ def set_table_effect(idx):
     }
     payload = json.dumps(payload)
 
-    client.publish("klu/table/effect", payload)
+    client.publish(constants.MQTT_TABLE_EFFECT_SET_TOPIC, payload)
 
 def table_enter_handler():
     set_table_effect(6) # disco
@@ -76,7 +83,8 @@ client = mqtt.Client()
 if __name__ == "__main__":
     tasks = {
             'ENTER': [ lamp_enter_handler, table_enter_handler, constants.WPC_CMD],
-            'LEAVE': [ constants.LAMP_OFF_CMD, table_leave_handler],
+            'LEAVE': [ lamp_leave_handler, table_leave_handler],
+            #'LEAVE': [ constants.LAMP_OFF_CMD, table_leave_handler],
     }
 
     logging.basicConfig(level=logging.DEBUG,

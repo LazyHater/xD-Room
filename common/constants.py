@@ -22,6 +22,5 @@ SUNRISE_URL = SUNRISE_API['base'].format(**SUNRISE_API)
 PC_MAC = "C0:4A:00:77:10:0B"
 WPC_CMD = "wakeonlan {mac}".format(mac=PC_MAC)
 
-LAMP_ON_CMD="curl -s --data level=3 http://192.168.1.9/lamp"
-LAMP_OFF_CMD="curl -s --data level=0 http://192.168.1.9/lamp"
-
+MQTT_TABLE_EFFECT_SET_TOPIC = "home/xdtable/effect/set"
+MQTT_LAMP_SET_TOPIC = "home/xdlamp/set"
