@@ -14,5 +14,3 @@ ENV PYTHONPATH="/common"
 WORKDIR /code
 
 CMD ["python3", "hub.py"]
-
-#CMD ["tail", "-f", "/dev/null"]

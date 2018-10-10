@@ -1,0 +1,96 @@
+@import "./public/common/css/style.less";
+
+crouton-frame {
+  color: @fc-light;
+  background-color: @nav-bg !important;
+  display: block;
+  height: 100vh;
+
+
+  crouton-container {
+    display: inline-block;
+    width: 100%;
+    min-height: 100vh;
+    background-color: @container-bg;
+    padding: @container-padding;
+    padding-left: @container-padding - @toastcss-margin;
+    padding-top: @container-padding - 10px;
+
+    .grid {
+      margin: 0px;
+
+      .holder {
+        margin-left: 0px;
+
+        & > p {
+          margin-top: 0px;
+          margin-left: @toastcss-margin;
+        }
+      }
+
+      &.contentMarginFix {
+        margin-left: -20px;
+        @media only screen and (max-width: @screen-mobile) {
+          margin-left: 0px;
+        }
+      }
+      &.cardMarginFix {
+        margin-left: 0px;
+        padding-left: 0px;
+        @media only screen and (max-width: @screen-mobile) {
+          margin-left: 0px;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media only screen and (max-width: @screen-mobile) {
+        margin-right: @margin-mobile;
+        margin-left: @margin-mobile;
+      }
+    }
+
+    .grid__col{
+      padding-left: 20px;
+      margin-left: 0px;
+
+      @media only screen and (max-width: @screen-mobile) {
+        padding-left: 0px;
+      }
+    }
+
+    .grid__col--centered {
+      margin-left: auto;
+    }
+
+    .frameHolder {
+      .cardInner {
+        padding: 0px;
+      }
+    }
+
+    .customToast{
+      z-index: 100;
+      left: 20px;
+
+      i.toastIcon {
+        font-size: 18px;
+        margin-right: 7px;
+      }
+
+      a{
+        color: @fc-accent;
+      }
+    }
+
+    @media only screen and (max-width: @screen-mobile) {
+      padding: @container-padding-mobile;
+
+      .customToast{
+        left: 5px;
+      }
+    }
+  }
+}

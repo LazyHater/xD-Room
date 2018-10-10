@@ -22,4 +22,27 @@ services:
     volumes:
             - "./hub:/code" 
             - "./common:/common" 
+  exta:
+    build: ./docker/exta
+#    command: "tail -f /dev/null"
+    network_mode: host
+    restart: always
+    volumes:
+            - "./exta:/usr/src/app" 
+            - "./common:/common" 
+
+  crouton:
+    build: ./docker/crouton
+    #command: "tail -f /dev/null"
+    network_mode: host
+    restart: always
+#    user: node
+
+#    environment:
+      #- NODE_ENV=production
+ #   command: "sleep infinity"
+    command: "grunt"
+    volumes:
+            - "./crouton:/home/node/app" 
+            - "./common:/common" 
 

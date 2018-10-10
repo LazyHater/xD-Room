@@ -6,11 +6,12 @@ import logging
 import sunrise
 import datetime
 import threading
+import random
 # The callback for when the client receives a CONNACK response from the server.
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
+    logging.info("Connected to mqtt broker with result code " + str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -69,13 +70,26 @@ def set_table_effect(idx):
 
     client.publish(constants.MQTT_TABLE_EFFECT_SET_TOPIC, payload)
 
-def table_enter_handler():
-    set_table_effect(6) # disco
+table_cycle_idx = -1
 
-    t = threading.Timer(60, set_table_effect, args=(3,)) # sin2
-    t.start()
+def table_cycle():
+    global table_cycle_idx
+    eff = [ 1, 3, 16]
+    if table_cycle_idx != -1:
+        set_table_effect(eff[table_cycle_idx])
+        table_cycle_idx += 1
+        table_cycle_idx %= len(eff)
+        threading.Timer(60 * 15, table_cycle).start()
+
+def table_enter_handler():
+    global table_cycle_idx
+    set_table_effect(6) # disco
+    table_cycle_idx = random.randint(0, 2)
+    threading.Timer(60, table_cycle).start() # sin2
 
 def table_leave_handler():
+    global table_cycle_idx
+    table_cycle_idx = -1
     set_table_effect(11) # black
 
 client = mqtt.Client()

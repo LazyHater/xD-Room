@@ -2,8 +2,8 @@ BEACON_CONF = {
         "mac": "a0:e6:f8:42:52:70",
         "timeout": 60,
         "name": "wakabajaszi",
-        "status_topic": "klu/ble/status",
-        "event_topic": "klu/ble/event",
+        "status_topic": "home/beacon/status",
+        "event_topic": "home/beacon/event",
         }
 
 MQTT_CON = {
